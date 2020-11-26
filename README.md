@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Five video classification methods
 
 The five video classification methods:
@@ -69,5 +68,4 @@ Khurram Soomro, Amir Roshan Zamir and Mubarak Shah, UCF101: A Dataset of 101 Hum
 =======
 # Video-Classification-using-a-CNN-and-SVM
 Final project of CS378. Video classification using a CNN for feature extraction and SVM for classification on the UCF-101 dataset
->>>>>>> 5b7ad6f1bc8134b57dbc86e793c4bb524bddc766
 
