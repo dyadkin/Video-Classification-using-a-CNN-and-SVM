@@ -12,8 +12,9 @@ from keras.optimizers import SGD
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D
-from keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping
+from keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping, CSVLogger
 from data import DataSet
+import time
 import os.path
 
 data = DataSet()
@@ -118,6 +119,11 @@ def main(weights_file):
     model = get_model()
     generators = get_generators()
 
+    # Helper: Save results.
+    timestamp = time.time()
+    csv_logger = CSVLogger(os.path.join('data', 'logs', 'InceptionV3' + '-' + 'training-' + \
+        str(timestamp) + '.log'))
+
     if weights_file is None:
         print("Loading network from ImageNet weights.")
         # Get and train the top layers.
@@ -130,7 +136,7 @@ def main(weights_file):
     # Get and train the mid layers.
     model = freeze_all_but_mid_and_top(model)
     model = train_model(model, 1000, generators,
-                        [checkpointer, early_stopper, tensorboard])
+                        [checkpointer, early_stopper, tensorboard, csv_logger])
 
 if __name__ == '__main__':
     weights_file = None

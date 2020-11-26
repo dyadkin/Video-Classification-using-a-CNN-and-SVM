@@ -19,8 +19,8 @@ def main(training_log):
         plt.plot(accuracies)
         plt.plot(top_5_accuracies)
         plt.plot(cnn_benchmark)
-        plt.show()
+        plt.savefig('trainlog_plot.png')
 
 if __name__ == '__main__':
-    training_log = 'data/logs/mlp-training-1489455559.7089438.log'
+    training_log = 'data/logs/InceptionV3-training-1606265533.4140508.log'
     main(training_log)
