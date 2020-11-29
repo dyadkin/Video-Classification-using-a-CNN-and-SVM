@@ -9,18 +9,24 @@ def main(training_log):
         reader = csv.reader(fin)
         next(reader, None)  # skip the header
         accuracies = []
+        #losses = []
         top_5_accuracies = []
         cnn_benchmark = []  # this is ridiculous
-        for epoch,acc,loss,top_k_categorical_accuracy,val_acc,val_loss,val_top_k_categorical_accuracy in reader:
-            accuracies.append(float(val_acc))
-            top_5_accuracies.append(float(val_top_k_categorical_accuracy))
+        for epoch,acc,loss,top_k_categorical_accuracy in reader: #val_acc,val_loss ,val_top_k_categorical_accuracy in reader:
+            accuracies.append(float(acc))
+            #losses.append(float(loss))
+            top_5_accuracies.append(float(top_k_categorical_accuracy))
             cnn_benchmark.append(0.65)  # ridiculous
 
-        plt.plot(accuracies)
-        plt.plot(top_5_accuracies)
-        plt.plot(cnn_benchmark)
+        plt.plot(accuracies, label='accuracy')
+        #plt.plot(losses)
+        plt.plot(top_5_accuracies, label='Top 5 accuracy')
+        plt.plot(cnn_benchmark, label='0.65 benchmark')
+        plt.xlabel('Epochs')
+        plt.title('Custom Net Training')
+        plt.legend()
         plt.savefig('trainlog_plot.png')
 
 if __name__ == '__main__':
-    training_log = 'data/logs/InceptionV3-training-1606265533.4140508.log'
+    training_log = 'data/logs/SF_MultiRes-training-1606633512.1547835.log'
     main(training_log)
