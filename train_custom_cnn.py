@@ -13,7 +13,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Flatten, concatenate, Lambda, Input,\
      Dropout, Dense, MaxPooling2D, Conv2D
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard,\
-     EarlyStopping, CSVLogger
+     EarlyStopping, CSVLogger, LearningRateScheduler
 from tensorflow.keras.utils import plot_model
 import tensorflow as tf
 from data import DataSet
@@ -21,6 +21,14 @@ import time
 import os.path
 
 data = DataSet()
+
+
+def scheduler(epoch, lr):
+    if epoch % 3 == 0:
+        return lr * tf.math.exp(-0.5)
+    else:
+        return lr
+
 
 # Helper: Save the model.
 checkpointer = ModelCheckpoint(
@@ -40,6 +48,10 @@ tensorboard = TensorBoard(log_dir=os.path.join('data', 'logs'))
 timestamp = time.time()
 csv_logger = CSVLogger(os.path.join('data', 'logs', 'SF_MultiRes' + '-' +
                                     'training-' + str(timestamp) + '.log'))
+
+
+# Helper: Schedule learning rate.
+lr_scheduler = LearningRateScheduler(scheduler)
 
 
 def crop_center(img):
@@ -253,7 +265,7 @@ def main(weights_file):
     # # Get and train the mid layers.
     # model = freeze_all_but_mid_and_top(model)
     model = train_model(model, 1250, train_generator,
-                        [checkpointer, tensorboard, csv_logger],
+                        [checkpointer, tensorboard, csv_logger, lr_scheduler],
                         validation_generator=validation_generator)
 
 
