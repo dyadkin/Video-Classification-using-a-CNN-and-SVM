@@ -5,6 +5,8 @@ __pycache__
 *gz
 *avi
 *swp
+*plot.png
+*test.png
 data/logs/*
 data/checkpoints/*
 data/sequences/*
