@@ -39,22 +39,25 @@ timestamp = time.time()
 csv_logger = CSVLogger(os.path.join('data', 'logs', 'InceptionV3' + '-' + 'training-' + \
     str(timestamp) + '.log'))
 
+
 def crop_center(img):
     cropx = 89
     cropy = 89
-    y,x,z = img.shape
+    y, x, z = img.shape
     startx = x//2-(cropx//2)
-    starty = y//2-(cropy//2)    
-    return img[starty:starty+cropy,startx:startx+cropx]-117
+    starty = y//2-(cropy//2)
+    return img[starty:starty+cropy, startx:startx+cropx]-96
+
 
 def subtract_mean(img):
-    return img-117
+    return img-96
+
 
 def get_test_generator():
     context_datagen = ImageDataGenerator()
-    
+
     fovea_datagen = ImageDataGenerator(
-    preprocessing_function=crop_center)
+        preprocessing_function=crop_center)
 
     context_generator = context_datagen.flow_from_directory(
         os.path.join('data', 'test'),
@@ -74,11 +77,11 @@ def get_test_generator():
     while True:
         f = fovea_generator.next()
         c = context_generator.next()
-        yield [f[0],c[0]], f[1]
+        yield [f[0], c[0]], f[1]
 
 
 def test_model(model, test_generator, nb_steps, callbacks=[]):
-    #train_generator, validation_generator = generators
+    # train_generator, validation_generator = generators
     model.evaluate(
         test_generator,
         verbose=1,
@@ -86,12 +89,13 @@ def test_model(model, test_generator, nb_steps, callbacks=[]):
         callbacks=callbacks)
     return model
 
+
 def main(weights_file):
     model = get_model()
     print(model.summary())
 
     test_generator = get_test_generator()
-    
+
     # if weights_file is None:
     #     print("Loading network from ImageNet weights.")
     #     # Get and train the top layers.
@@ -103,6 +107,7 @@ def main(weights_file):
 
     callbacks = [checkpointer, tensorboard, csv_logger]
     model = test_model(model, test_generator, 100)
+
 
 if __name__ == '__main__':
     weights_file = 'data/checkpoints/SF_MultiRes.1233-0.79.hdf5'

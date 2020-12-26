@@ -30,5 +30,5 @@ def main(training_log):
 
 
 if __name__ == "__main__":
-    training_log = "data/logs/SF_MultiRes-training-1607744970.601056.log"
+    training_log = "data/logs/SF_MultiRes-training-1607755644.3236337.log"
     main(training_log)
