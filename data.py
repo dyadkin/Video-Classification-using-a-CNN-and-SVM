@@ -12,6 +12,7 @@ import threading
 from processor import process_image
 from keras.utils import to_categorical
 
+
 class threadsafe_iterator:
     def __init__(self, iterator):
         self.iterator = iterator
@@ -24,11 +25,13 @@ class threadsafe_iterator:
         with self.lock:
             return next(self.iterator)
 
+
 def threadsafe_generator(func):
     """Decorator"""
     def gen(*a, **kw):
         return threadsafe_iterator(func(*a, **kw))
     return gen
+
 
 class DataSet():
 
