@@ -9,6 +9,7 @@ __pycache__
 *test.png
 data/logs/*
 data/checkpoints/*
+data/svm_checkpoints/*
 data/sequences/*
 data/train/*
 data/test/*

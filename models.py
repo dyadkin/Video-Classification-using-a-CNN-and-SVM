@@ -5,9 +5,9 @@ from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras.models import Model, Sequential, load_model
 from tensorflow.keras.layers import Flatten, concatenate, Lambda, Input,\
      Dropout, Dense, MaxPooling2D, MaxPooling3D, Conv2D, Conv3D,\
-     ZeroPadding3D, Activation, BatchNormalization
-from tensorflow.keras.layers.recurrent import LSTM
-from tensorflow.keras.layers.wrappers import TimeDistributed
+     ZeroPadding3D, Activation, BatchNormalization, LSTM, TimeDistributed
+# from tensorflow.keras.layers.recurrent import LSTM
+# from tensorflow.keras.layers.wrappers import TimeDistributed
 from tensorflow.keras.regularizers import l2
 from collections import deque
 
@@ -47,7 +47,7 @@ class ResearchModels():
             metrics.append('top_k_categorical_accuracy')
 
         # Get the appropriate model.
-        if self.saved_model is not None:
+        if (self.saved_model is not None) and (model != 'sf_multires'):
             print("Loading model %s" % self.saved_model)
             self.model = load_model(self.saved_model)
         elif model == 'lstm':
@@ -71,16 +71,19 @@ class ResearchModels():
             self.input_shape = (seq_length, 80, 80, 3)
             self.model = self.c3d()
         elif model == 'sf_multires':
+            print("Loading SF Multires")
             fovea_input = Input(shape=(89, 89, 3), name='fovea_input')
             context_input = Input(shape=(89, 89, 3), name='context_input')
             self.model = self.SF_Multires(fovea_input, context_input)
+            if self.saved_model is not None:
+                self.model.load_weights(self.saved_model)
         else:
             print("Unknown network.")
             sys.exit()
 
         # Now compile the network.
         if model_optimizer == 'adam':
-            optimizer = Adam(lr=1e-5, decay=1e-6)       
+            optimizer = Adam(lr=1e-5, decay=1e-6)
         elif model_optimizer == 'sgd':
             optimizer = SGD(lr=0.0001, momentum=0.9)
         else:
@@ -326,7 +329,7 @@ class ResearchModels():
         fc = Dense(4096, activation='relu')(fc)
         do = Dropout(0.5)(fc)
 
-        predictions = Dense(len(self.nb_classes), activation='softmax')(do)
+        predictions = Dense(self.nb_classes, activation='softmax')(do)
 
         model = Model(inputs=[fovea_input, context_input], outputs=predictions)
         return model
